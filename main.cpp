@@ -42,10 +42,10 @@ int main () {
 		char number[20];
 		//while (inFile >> entry) {}
 		while (inFile.good()) {
+			// maybe the line below will be equal to a new node, having difficulty understanding the get line stuff
 			inFile.getline(number, 1000, ',');
 		}
 		
-		tree[i] = 0;
 	}
 	
 	// if there is not a file then say so and quit
@@ -55,6 +55,39 @@ int main () {
 	}
 
 	inFile.close();
+	
+	// while not quitting, ask if they want to print add or quit
+	while (true) {
+		char input[10] =  "xxxxxxxxx" ;
+		
+		cout << "You can print [P] or add [A] or quit [Q]" << endl;
+		cin >> input;
+		
+		//cout << "input is [" << input << "]";
+		// if print...
+		if (strcmp(input, "p") == 0 || strcmp(input, "P") == 0 || strcmp(input, "print") == 0 || strcmp(input, "Print") == 0) {
+			
+			// check if there is a tree then print out
+			if (root != NULL) {
+				cout << "[Infix] ";
+				root->print();
+				cout << endl;
+				root->visual();
+			}
+		}
+		
+		// if deleting...
+		else if (strcmp(input, "a") == 0 || strcmp(input, "A") == 0 || strcmp(input, "add") == 0 || strcmp(input, "Add") == 0){
+			// read in a number to add
+			int n = 0;
+			cout << "Enter a number to add: ";
+			cin >> n;
+			cout << endl;
+			// here i need to actually add it into the tree
+			
+		} else {
+			break;
+		}
 
 	}
 	
