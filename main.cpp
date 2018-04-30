@@ -23,9 +23,12 @@ using namespace std;
 
 int main () {
 
-	char entry[10];
+
 	cout << "This program creates a red black tree which is a binary search tree that is roughly even." << endl;
 
+	Node* root = NULL;
+	
+	
 	char fileName[25];
 	cout << "Please enter the name of the file you wish to read into the red black tree: ";
 	cin.get(fileName, sizeof(fileName));
@@ -39,11 +42,22 @@ int main () {
 	if (inFile.is_open()) {
 		cout << "Opening file..." << endl;
 		int entry;
-		char number[20];
+		//char number[20];
 		//while (inFile >> entry) {}
 		while (inFile.good()) {
-			// maybe the line below will be equal to a new node, having difficulty understanding the get line stuff
-			inFile.getline(number, 1000, ',');
+			
+			if (inFile) {
+				
+				if (root == NULL) {
+					root = new Node(entry);
+				} else {
+					inFile >> entry;
+					cout << entry << endl;
+					root->insert(entry);
+					inFile.ignore();
+				}
+			}
+			
 		}
 		
 	}
@@ -68,12 +82,14 @@ int main () {
 		if (strcmp(input, "p") == 0 || strcmp(input, "P") == 0 || strcmp(input, "print") == 0 || strcmp(input, "Print") == 0) {
 			
 			// check if there is a tree then print out
+			
 			if (root != NULL) {
 				cout << "[Infix] ";
 				root->print();
 				cout << endl;
 				root->visual();
 			}
+			
 		}
 		
 		// if deleting...
