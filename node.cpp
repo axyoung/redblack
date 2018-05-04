@@ -14,14 +14,16 @@ Node::Node() {
 // constructor
 Node::Node(int value, Node* p) {
 	data = value;
+	parent = p;
 	child[L] = LEAF;
 	child[R] = LEAF;
 	if (parent != NULL) {
 		color = RED;
+		//cout << "red" << endl;
 	} else {
 		color = BLACK; // this is the case of the root - the only place where the parent is null
+		//out << "black" << endl;
 	}
-	parent = p;
 }
 
 // destructor
@@ -63,15 +65,15 @@ void Node::visual() const {
 	}
 	// print parent
 	if (parent != NULL) {
-		cout << " [Parent] " << parent << " " << parent->data;
+		cout << " [Parent] " << parent << ": " << parent->data;
 	}
 	// print left child
 	if (child[L] != LEAF) {
-		cout << " [Left Child] " << child[L] << " " << child[L]->data;
+		cout << " [Left Child] " << child[L] << ": " << child[L]->data;
 	}
 	// print right child
 	if (child[R] != LEAF) {
-		cout << " [Right Child] " << child[R] << " " << child[R]->data;
+		cout << " [Right Child] " << child[R] << ": " << child[R]->data;
 	}
 	
 	cout << endl;
@@ -88,7 +90,7 @@ void Node::visual() const {
 	return;
 }
 
-// method to insert values into tree
+// method to insert values into tree, returns the new node
 Node* Node::insert(int value) {
 
 	// if the value is smaller it is left
@@ -139,6 +141,19 @@ Node* Node::uncle() {
 	return parent->sibling();
 }
 
+void Node::rotate() {
+	Node* newNode = child[L + R - getChild()];
+	
+	if (newNode == LEAF) {
+		return;
+	}
+	
+	child[L + R - getChild()] = newNode->child[getChild()];
+	newNode->child[getChild()] = this;
+	newNode->parent = parent;
+	parent = newNode;
+}
+
 void Node::repair() {
 	// will go through the cases to repair the tree when adding in a node to the tree
 	
@@ -163,5 +178,26 @@ void Node::repair() {
 	}
 	
 	// case 4 - NEED TO WRITE ROTATE FUNCTION AND CASE 4 CODE 
+	if (this == parent->parent->child[L]->child[R]) {
+		parent->rotate();
+		child[L]->case_4();
+	}
+	
+	if (this == parent->parent->child[R]->child[L]) {
+		parent->rotate();
+		child[R]->case_4();
+	}
+}
+
+// wikipedia :)
+void Node::case_4() {
+	
+	if (this == parent->child[L]) {
+		parent->parent->rotate();
+	} else {
+		parent->parent->rotate();
+		parent->color = BLACK;
+		parent->parent->color = RED;
+	}
 	
 }

@@ -19,10 +19,12 @@ class Node {
 		Node* insert(int value);
 		void print() const;
 		void visual() const;
-		
+		void rotate();
 		Node* getRoot();
 		
 		void repair();
+		
+		void case_4();
 		
 	
 	// each node has data and a left and right node

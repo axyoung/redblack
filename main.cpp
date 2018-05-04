@@ -48,13 +48,12 @@ int main () {
 			
 			if (inFile) {
 				inFile >> entry;
-				cout << entry << endl;
+				cout << entry << "... ";
 				tree.insert(entry);
 				inFile.ignore();
-			}
-			
+			}	
 		}
-		
+		cout << endl;
 	}
 	
 	// if there is not a file then say so and quit
@@ -91,6 +90,7 @@ int main () {
 			int n = 0;
 			cout << "Enter a number to add: ";
 			cin >> n;
+			tree.insert(n);
 			cout << endl;
 			// here i need to actually add it into the tree
 			
