@@ -16,7 +16,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
-#include "node.h"
+#include "tree.h"
 
 using namespace std;
 
@@ -26,7 +26,7 @@ int main () {
 
 	cout << "This program creates a red black tree which is a binary search tree that is roughly even." << endl;
 
-	Node* root = NULL;
+	RedBlackTree tree;
 	
 	
 	char fileName[25];
@@ -47,15 +47,10 @@ int main () {
 		while (inFile.good()) {
 			
 			if (inFile) {
-				
-				if (root == NULL) {
-					root = new Node(entry);
-				} else {
-					inFile >> entry;
-					cout << entry << endl;
-					root->insert(entry);
-					inFile.ignore();
-				}
+				inFile >> entry;
+				cout << entry << endl;
+				tree.insert(entry);
+				inFile.ignore();
 			}
 			
 		}
@@ -82,13 +77,11 @@ int main () {
 		if (strcmp(input, "p") == 0 || strcmp(input, "P") == 0 || strcmp(input, "print") == 0 || strcmp(input, "Print") == 0) {
 			
 			// check if there is a tree then print out
-			
-			if (root != NULL) {
-				cout << "[Infix] ";
-				root->print();
-				cout << endl;
-				root->visual();
-			}
+	
+			cout << "[Infix] ";
+			tree.print();
+			cout << endl;
+			tree.visual();
 			
 		}
 		

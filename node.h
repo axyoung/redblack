@@ -7,29 +7,39 @@
 using namespace std;
 
 class Node {
-
+	// http://www.stolerman.net/studies/cs521/red_black_trees.pdf
+	// https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
+	// http://pages.cs.wisc.edu/~paton/readings/Red-Black-Trees/
 	// in the node class function will remove insert and print the nodes in the search tree
 	public:
-		Node(int value);
+		Node();
+		Node(int value, Node* p);
 		~Node();
 		
-		void insert(int value);
+		Node* insert(int value);
 		void print() const;
 		void visual() const;
-		// http://www.stolerman.net/studies/cs521/red_black_trees.pdf
-		// https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
-		// http://pages.cs.wisc.edu/~paton/readings/Red-Black-Trees/
-		void case_1(int value);
-		void case_2(int value);
-		void case_3(int value);
-		void case_4(int value);
+		
+		Node* getRoot();
+		
+		void repair();
+		
 	
 	// each node has data and a left and right node
 	private:
+		enum Color {RED, BLACK}; // Father showed me enums, way to create a data type
 		int data;
-		Node* left;
-		Node* right;
-		bool black;
-
+		Node* child[2]; // this will hold the left and right children
+		const int L = 0;
+		const int R = 1;
+		Node* parent;
+		Color color;
+		
+		static Node* LEAF; // one variable named leaf that will be pointed to
+		
+		int getChild();
+		Node* sibling();
+		Node* uncle();
+		
 };
 #endif
