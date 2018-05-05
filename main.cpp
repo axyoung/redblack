@@ -10,7 +10,7 @@
  * This code implements psuedo-code from https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
  * 
  * made by: Alex Young
- * last updated: 4/11/2018
+ * last updated: 5/4/2018
  */
 
 #include <iostream>
@@ -48,7 +48,7 @@ int main () {
 			
 			if (inFile) {
 				inFile >> entry;
-				cout << entry << "... ";
+				cerr << entry << " ";
 				tree.insert(entry);
 				inFile.ignore();
 			}	
@@ -84,7 +84,7 @@ int main () {
 			
 		}
 		
-		// if deleting...
+		// if adding...
 		else if (strcmp(input, "a") == 0 || strcmp(input, "A") == 0 || strcmp(input, "add") == 0 || strcmp(input, "Add") == 0){
 			// read in a number to add
 			int n = 0;

@@ -19,7 +19,7 @@ class Node {
 		Node* insert(int value);
 		void print() const;
 		void visual() const;
-		void rotate();
+		int validate(Node* root) const;
 		Node* getRoot();
 		
 		void repair();
@@ -43,5 +43,7 @@ class Node {
 		Node* sibling();
 		Node* uncle();
 		
+		void rotate(int c1, int c2);
+		void rotate2(int c1, int c2);
 };
 #endif

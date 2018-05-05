@@ -1,6 +1,6 @@
 #include "tree.h"
 
-
+// constructor
 RedBlackTree::RedBlackTree() {
 	root = NULL;
 }
@@ -33,4 +33,5 @@ void RedBlackTree::insert(int value) {
 		root = root->getRoot(); // gives me new root
 	}
 	
+	root->validate(root);
 }

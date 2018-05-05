@@ -56,7 +56,7 @@ void Node::print() const {
 // uses prefix to print out visually
 void Node::visual() const {
 	// print current data
-	cout << "[Address] " << this << " [Data] " << data;
+	cout << /*"[Address] " << this <<*/ " [Data] " << data;
 	
 	if (color == BLACK) {
 		cout << " [Black] ";
@@ -65,15 +65,15 @@ void Node::visual() const {
 	}
 	// print parent
 	if (parent != NULL) {
-		cout << " [Parent] " << parent << ": " << parent->data;
+		cout << " [Parent] " /*<< parent << ": " */<< parent->data;
 	}
 	// print left child
 	if (child[L] != LEAF) {
-		cout << " [Left Child] " << child[L] << ": " << child[L]->data;
+		cout << " [Left Child] " 	/*<< child[L] << ": " */<< child[L]->data;
 	}
 	// print right child
 	if (child[R] != LEAF) {
-		cout << " [Right Child] " << child[R] << ": " << child[R]->data;
+		cout << " [Right Child] " /*<< child[R] << ": " */<< child[R]->data;
 	}
 	
 	cout << endl;
@@ -88,6 +88,78 @@ void Node::visual() const {
 	}
 	
 	return;
+}
+
+// return value is the number of black nodes on this subtree
+// father helped me with this part of the code when I was having lots of trouble debugging my code
+// this logic checks for errors according to the logic of a red black tree
+int Node::validate(Node* root) const {
+	
+	int errorCount = 0;
+	int leftNodeCount = 1;
+	int rightNodeCount = 1;
+	
+	if (child[L] != LEAF) {
+		if (child[L]->parent != this) {
+			cerr << "left child parent mismatch" << endl;
+			errorCount++;
+		}
+		
+		if (child[L]->data > data) {
+			cerr << "left child data larger" << endl;
+			errorCount++;
+		}
+		
+		leftNodeCount = child[L]->validate(root);
+	}
+	
+	if (child[R] != LEAF) {
+		if (child[R]->parent != this) {
+			cerr << "right child parent mismatch" << endl;
+			errorCount++;
+		}
+		
+		if (child[R]->data < data) {
+			cerr << "right child data smaller" << endl;
+			errorCount++;
+		}
+		
+		rightNodeCount = child[R]->validate(root);
+	}
+	
+	if (leftNodeCount != rightNodeCount) {
+		cerr << "node count mismatch  " << leftNodeCount << " " << rightNodeCount << endl;
+		errorCount++;
+	}
+	
+	if (parent == NULL && color == RED) {
+		cerr << "red root" << endl;
+		errorCount++;
+	}
+	
+	if ((parent == NULL) != (root == this)) {
+		cerr << "non root node with null parent" << endl;
+		errorCount++;
+	}
+	
+	if (parent != NULL && parent->color == RED && color != BLACK) {
+		cerr << "red property X" << endl;
+		errorCount++;
+	}
+	
+	if (errorCount > 0) {
+		cerr << "errors detected: " << errorCount << "  at: " << data << " address: " << this << endl;
+		root->print();
+		cout << endl;
+		root->visual();
+		exit(1);
+	}
+	
+	if (color == BLACK) {
+		leftNodeCount++;
+	}
+	
+	return leftNodeCount;
 }
 
 // method to insert values into tree, returns the new node
@@ -114,6 +186,7 @@ Node* Node::insert(int value) {
 	}
 }
 
+// function returns the root
 Node* Node::getRoot() {
 	Node* root = this;
 	
@@ -140,20 +213,64 @@ Node* Node::sibling() {
 Node* Node::uncle() {
 	return parent->sibling();
 }
-
-void Node::rotate() {
-	Node* newNode = child[L + R - getChild()];
+/*
+void Node::rotate(int c1, int c2) {
+	
+	Node* newNode = child[c2];
 	
 	if (newNode == LEAF) {
 		return;
 	}
 	
-	child[L + R - getChild()] = newNode->child[getChild()];
-	newNode->child[getChild()] = this;
+	child[c2] = newNode->child[c1];
+	child[c2]->parent = this;
+	newNode->child[c1] = this;
 	newNode->parent = parent;
+	parent->child[c1] = newNode;
 	parent = newNode;
+} */
+
+// this uses the concept maps from CS WISC
+void Node::rotate(int c1, int c2) {
+	//LR->LR
+	Node* k = this;
+	Node* p = parent;
+	Node* g = parent->parent;
+	
+	k->parent = g->parent;
+	
+	if (g->parent != NULL) {
+		g->parent->child[g->getChild()] = k;
+	}
+	p->child[c2] = k->child[c1];
+	g->child[c1] = k->child[c2];
+	p->child[c2]->parent = p;
+	g->child[c1]->parent = g;
+	g->parent = k;
+	p->parent = k;
+	k->child[c1] = p;
+	k->child[c2] = g;
+	
 }
 
+// this uses the concept maps from CS WISC
+void Node::rotate2(int c1, int c2) {
+	//LL->RL
+	Node* p = this;
+	Node* g = parent;
+	
+	p->parent = g->parent;
+	
+	if (g->parent != NULL) {
+		g->parent->child[g->getChild()] = p;
+	}
+	g->parent = p;
+	p->child[c1]->parent = g;
+	g->child[c2] = p->child[c1];
+	p->child[c1] = g;
+}
+
+// repairs the node as it is inserted
 void Node::repair() {
 	// will go through the cases to repair the tree when adding in a node to the tree
 	
@@ -177,27 +294,74 @@ void Node::repair() {
 		return;
 	}
 	
-	// case 4 - NEED TO WRITE ROTATE FUNCTION AND CASE 4 CODE 
+	// case 4 - p red uncle black
+	
 	if (this == parent->parent->child[L]->child[R]) {
-		parent->rotate();
-		child[L]->case_4();
+		//parent->rotate(L, R);
+		rotate(L, R);
+		//child[L]->case_4();
+		child[R]->color = RED;
+		child[R]->sibling()->color = RED;
+		color = BLACK;
+		/*
+		if (parent != NULL && parent->parent != NULL) {
+			parent->color = RED;
+		}
+		*/
+		return;
 	}
 	
 	if (this == parent->parent->child[R]->child[L]) {
-		parent->rotate();
-		child[R]->case_4();
+		//parent->rotate(R, L);
+		rotate(R, L);
+		//child[R]->case_4();
+		child[L]->color = RED;
+		child[L]->sibling()->color = RED;
+		color = BLACK;
+		/*
+		if (parent != NULL && parent->parent != NULL) {
+			parent->color = RED;
+		}
+		*/
+		return;
 	}
+	
+	if (this == parent->parent->child[L]->child[L]) {
+		parent->rotate2(R, L);
+		color = RED;
+		sibling()->color = RED;
+		parent->color = BLACK;/*
+		if (parent->parent != NULL && parent->parent->parent != NULL) {
+			parent->parent->color = RED;
+		}	*/
+		return;
+	}
+	
+	parent->rotate2(L, R);
+	color = RED;
+	sibling()->color = RED;
+	parent->color = BLACK;
+	/*
+	if (parent->parent != NULL && parent->parent->parent != NULL) {
+		parent->parent->color = RED;
+	}
+	*/
 }
 
-// wikipedia :)
+/*
 void Node::case_4() {
 	
 	if (this == parent->child[L]) {
-		parent->parent->rotate();
+		parent->parent->rotate(R, L);
 	} else {
-		parent->parent->rotate();
-		parent->color = BLACK;
-		parent->parent->color = RED;
+		parent->parent->rotate(L, R);
 	}
 	
+	color = RED;
+	sibling()->color = RED;
+	parent->color = BLACK;
+	if (parent->parent != NULL && parent->parent->parent != NULL) {
+		parent->parent->color = RED;
+	}
 }
+*/
