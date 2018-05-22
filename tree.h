@@ -17,6 +17,8 @@ class RedBlackTree {
 		void insert(int value);
 		void print() const;
 		void visual() const;
+		void search(int value);
+		void remove(int value);
 
 	
 	// each RedBlackTree has data and a left and right RedBlackTree

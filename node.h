@@ -22,6 +22,7 @@ class Node {
 		int validate(Node* root) const;
 		Node* getRoot();
 		
+		
 		void repair();
 		
 		void case_4();

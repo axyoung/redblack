@@ -30,7 +30,8 @@ int main () {
 	
 	
 	char fileName[25];
-	cout << "Please enter the name of the file you wish to read into the red black tree: ";
+	cout << "Please enter the name of the file you wish to read into the red black tree." << endl
+		<< "[If you want to create an empty tree with a root of value 100, type (empty.txt)]." << endl;
 	cin.get(fileName, sizeof(fileName));
 	cin.get();
 	// use ifstream to open the file
@@ -81,6 +82,22 @@ int main () {
 			tree.print();
 			cout << endl;
 			tree.visual();
+			
+		}
+		
+		// if search...
+		if (strcmp(input, "s") == 0 || strcmp(input, "S") == 0 || strcmp(input, "search") == 0 || strcmp(input, "Search") == 0) {
+			
+			// check if there is a tree
+			//tree.search(n);
+			
+		}
+		
+		// if print...
+		if (strcmp(input, "p") == 0 || strcmp(input, "P") == 0 || strcmp(input, "print") == 0 || strcmp(input, "Print") == 0) {
+			
+			// check if there is a tree
+			//tree.remove(n);
 			
 		}
 		
