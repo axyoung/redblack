@@ -29,9 +29,40 @@ void RedBlackTree::insert(int value) {
 	if (root == NULL) {
 		root = new Node(value, NULL);
 	} else {
-		root->insert(value)->repair(); // repairing from the newly added node - which the insert function returns
+		root->insert(value)->repairInsert(); // repairing from the newly added node - which the insert function returns
 		root = root->getRoot(); // gives me new root
 	}
 	
 	root->validate(root);
+}
+
+// method to search the tree
+bool RedBlackTree::search(int value) const {
+
+	if (root != NULL) {
+		if (root->search(value) == NULL) {
+			return false;
+		} else {
+			return true;
+		}
+	} else {
+		return false;
+	}
+		
+}
+
+// method to remove a node from tree
+void RedBlackTree::remove(int value) {
+	
+	if (root != NULL) {
+		
+		Node* node = root->search(value);
+		if (node != NULL) {
+			node->remove(root);
+			
+			if (root != NULL) {
+				root->validate(root);
+			}
+		}
+	}	
 }

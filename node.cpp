@@ -186,6 +186,30 @@ Node* Node::insert(int value) {
 	}
 }
 
+// function searches the tree and returns the node with a value
+Node* Node::search(int value) {
+
+	// go through left side and call recursively
+	if (value < data) {
+		if (child[L] == LEAF) {
+			return NULL;
+		}
+		
+		return child[L]->search(value);
+	}
+	
+	// go through right side and call itself
+	if (value > data) {
+		if (child[R] == LEAF) {
+			return NULL;
+		}
+		
+		return child[R]->search(value);
+	}
+	
+	return this;
+}
+
 // function returns the root
 Node* Node::getRoot() {
 	Node* root = this;
@@ -213,22 +237,7 @@ Node* Node::sibling() {
 Node* Node::uncle() {
 	return parent->sibling();
 }
-/*
-void Node::rotate(int c1, int c2) {
-	
-	Node* newNode = child[c2];
-	
-	if (newNode == LEAF) {
-		return;
-	}
-	
-	child[c2] = newNode->child[c1];
-	child[c2]->parent = this;
-	newNode->child[c1] = this;
-	newNode->parent = parent;
-	parent->child[c1] = newNode;
-	parent = newNode;
-} */
+
 
 // this uses the concept maps from CS WISC
 void Node::rotate(int c1, int c2) {
@@ -271,7 +280,7 @@ void Node::rotate2(int c1, int c2) {
 }
 
 // repairs the node as it is inserted
-void Node::repair() {
+void Node::repairInsert() {
 	// will go through the cases to repair the tree when adding in a node to the tree
 	
 	// case 1 - root,
@@ -290,39 +299,29 @@ void Node::repair() {
 		parent->color = BLACK;
 		uncle()->color = BLACK;
 		parent->parent->color = RED;
-		parent->parent->repair();
+		parent->parent->repairInsert();
 		return;
 	}
 	
 	// case 4 - p red uncle black
 	
 	if (this == parent->parent->child[L]->child[R]) {
-		//parent->rotate(L, R);
+		
 		rotate(L, R);
-		//child[L]->case_4();
+		
 		child[R]->color = RED;
 		child[R]->sibling()->color = RED;
 		color = BLACK;
-		/*
-		if (parent != NULL && parent->parent != NULL) {
-			parent->color = RED;
-		}
-		*/
 		return;
 	}
 	
 	if (this == parent->parent->child[R]->child[L]) {
-		//parent->rotate(R, L);
+		
 		rotate(R, L);
-		//child[R]->case_4();
+		
 		child[L]->color = RED;
 		child[L]->sibling()->color = RED;
 		color = BLACK;
-		/*
-		if (parent != NULL && parent->parent != NULL) {
-			parent->color = RED;
-		}
-		*/
 		return;
 	}
 	
@@ -330,10 +329,7 @@ void Node::repair() {
 		parent->rotate2(R, L);
 		color = RED;
 		sibling()->color = RED;
-		parent->color = BLACK;/*
-		if (parent->parent != NULL && parent->parent->parent != NULL) {
-			parent->parent->color = RED;
-		}	*/
+		parent->color = BLACK;
 		return;
 	}
 	
@@ -341,27 +337,95 @@ void Node::repair() {
 	color = RED;
 	sibling()->color = RED;
 	parent->color = BLACK;
-	/*
-	if (parent->parent != NULL && parent->parent->parent != NULL) {
-		parent->parent->color = RED;
-	}
-	*/
 }
 
-/*
-void Node::case_4() {
+void Node::remove(Node* &root) {
 	
-	if (this == parent->child[L]) {
-		parent->parent->rotate(R, L);
-	} else {
-		parent->parent->rotate(L, R);
+	// new root case - updating the root
+	if (child[R] == LEAF && child[L] == LEAF && parent == NULL) {
+		root = NULL;
+		delete this;
+		return;
 	}
 	
-	color = RED;
-	sibling()->color = RED;
-	parent->color = BLACK;
-	if (parent->parent != NULL && parent->parent->parent != NULL) {
-		parent->parent->color = RED;
+	// root one child - updating the root
+	// in this case of one child of the root node -- there will only ever be two nodes in the entire tree
+	// as such, we are just switching the data in the child to the root and deleting the child
+	if ((child[R] == LEAF || child[L] == LEAF) && parent == NULL) {
+		
+		if (child[R] != LEAF) {
+			data = child[R]->data;
+			delete child[R];
+			child[R] = LEAF;
+		} else {
+			data = child[L]->data;
+			delete child[L];
+			child[L] = LEAF;
+		}
+		
+		return;
 	}
+	
+	// no children just delete
+	if (child[L] == LEAF && child[R] == LEAF) {
+		parent->child[getChild()] = child[getChild()];
+		if (color == BLACK) {
+			parent->case_1(root);
+		}
+		
+		delete this;
+		return;
+	}
+	
+	// one child case deletion
+	if (child[L] == LEAF || child[R] == LEAF) {
+		// if the child is on the left then switch and delete
+		if (child[L] != LEAF) {
+			removeOne(root, L);
+		} else { // if child on the right switch and delete
+			removeOne(root, R);
+		}
+		
+		return;
+	}
+	
+	// even if this is root this will work because we aren't modifying the actual root node, but the data inside
+	if (child[L] != LEAF && child[R] != LEAF) {
+		Node* node = child[L]->findRightmostChild();
+		data = node->data;
+		node->remove(root);
+		return;
+	}
+	
+	
 }
-*/
+
+// this will find the rightmost child of this node
+Node* Node::findRightmostChild() {
+	
+	if (child[R] != LEAF) {
+		return child[R]->findRightmostChild();
+	}
+	
+	return this;
+}
+
+void Node::removeOne(Node* &root, int c) {
+	// one child case deletion
+	
+	// if the child is on the left then switch and delete
+	parent->child[getChild()] = child[c];
+	child[c]->parent = parent;
+	child[c] = LEAF; // so we don't delete it through recursive destructor
+	
+	if (child[c]->color == RED) {
+		child[c]->color = BLACK;
+	}
+	
+	delete this;
+	return;
+}
+
+void case_1(Node* &root) {
+	
+}

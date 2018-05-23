@@ -17,7 +17,7 @@ class RedBlackTree {
 		void insert(int value);
 		void print() const;
 		void visual() const;
-		void search(int value);
+		bool search(int value) const;
 		void remove(int value);
 
 	

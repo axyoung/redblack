@@ -69,7 +69,7 @@ int main () {
 	while (true) {
 		char input[10] =  "xxxxxxxxx" ;
 		
-		cout << "You can print [P] or add [A] or quit [Q]" << endl;
+		cout << "You can print [P], add [A], search [S], remove [R] or quit [Q]" << endl;
 		cin >> input;
 		
 		//cout << "input is [" << input << "]";
@@ -86,18 +86,28 @@ int main () {
 		}
 		
 		// if search...
-		if (strcmp(input, "s") == 0 || strcmp(input, "S") == 0 || strcmp(input, "search") == 0 || strcmp(input, "Search") == 0) {
+		else if (strcmp(input, "s") == 0 || strcmp(input, "S") == 0 || strcmp(input, "search") == 0 || strcmp(input, "Search") == 0) {
 			
-			// check if there is a tree
-			//tree.search(n);
-			
+			// read in a number to search
+			int n = 0;
+			cout << "Enter a number to search for: ";
+			cin >> n;
+			if (tree.search(n) == false) {
+				cout << "The value " << n << " is not in the tree." << endl;
+			} else {
+				cout << "The value " << n << " is in the tree." << endl;
+			}
 		}
 		
-		// if print...
-		if (strcmp(input, "p") == 0 || strcmp(input, "P") == 0 || strcmp(input, "print") == 0 || strcmp(input, "Print") == 0) {
+		// if remove...
+		else if (strcmp(input, "r") == 0 || strcmp(input, "R") == 0 || strcmp(input, "remove") == 0 || strcmp(input, "Remove") == 0) {
 			
-			// check if there is a tree
-			//tree.remove(n);
+			// read in a number to remove
+			int n = 0;
+			cout << "Enter a number to remove: ";
+			cin >> n;
+			tree.remove(n);
+			cout << endl;
 			
 		}
 		
@@ -109,7 +119,6 @@ int main () {
 			cin >> n;
 			tree.insert(n);
 			cout << endl;
-			// here i need to actually add it into the tree
 			
 		} else {
 			break;

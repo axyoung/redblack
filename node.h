@@ -21,9 +21,10 @@ class Node {
 		void visual() const;
 		int validate(Node* root) const;
 		Node* getRoot();
+		Node* search(int value);
+		void remove(Node* &root);
 		
-		
-		void repair();
+		void repairInsert();
 		
 		void case_4();
 		
@@ -46,5 +47,9 @@ class Node {
 		
 		void rotate(int c1, int c2);
 		void rotate2(int c1, int c2);
+		Node* findRightmostChild();
+		void removeOne(Node* &root, int c);
+		
+		void case_1(Node* &root);
 };
 #endif
