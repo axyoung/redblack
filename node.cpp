@@ -1,3 +1,4 @@
+#include <cstdlib> // for exit(1) to work
 #include "node.h"
 
 Node* Node::LEAF = new Node;
@@ -239,7 +240,8 @@ Node* Node::uncle() {
 }
 
 
-// this uses the concept maps from CS WISC
+// this uses the concept maps from CS WISC - this is the second and fourth picture
+// http://pages.cs.wisc.edu/~paton/readings/Red-Black-Trees/
 void Node::rotate(int c1, int c2) {
 	//LR->LR
 	Node* k = this;
@@ -262,7 +264,8 @@ void Node::rotate(int c1, int c2) {
 	
 }
 
-// this uses the concept maps from CS WISC
+// this uses the concept maps from CS WISC - this is the first and third picture
+// in a left rotate - C1 is left and c2 is right
 void Node::rotate2(int c1, int c2) {
 	//LL->RL
 	Node* p = this;
@@ -370,7 +373,7 @@ void Node::remove(Node* &root) {
 	if (child[L] == LEAF && child[R] == LEAF) {
 		parent->child[getChild()] = child[getChild()];
 		if (color == BLACK) {
-			parent->case_1(root);
+			this->case_1(root);
 		}
 		
 		delete this;
@@ -390,6 +393,7 @@ void Node::remove(Node* &root) {
 	}
 	
 	// even if this is root this will work because we aren't modifying the actual root node, but the data inside
+	// if there are 2 children not leaves
 	if (child[L] != LEAF && child[R] != LEAF) {
 		Node* node = child[L]->findRightmostChild();
 		data = node->data;
@@ -413,19 +417,51 @@ Node* Node::findRightmostChild() {
 void Node::removeOne(Node* &root, int c) {
 	// one child case deletion
 	
+	if (child[c]->color == RED) {
+		child[c]->color = BLACK;
+	}
+	
 	// if the child is on the left then switch and delete
 	parent->child[getChild()] = child[c];
 	child[c]->parent = parent;
 	child[c] = LEAF; // so we don't delete it through recursive destructor
 	
-	if (child[c]->color == RED) {
-		child[c]->color = BLACK;
-	}
 	
 	delete this;
 	return;
 }
 
-void case_1(Node* &root) {
+// using wikipedia code for black node being removed with 2 leaves
+void Node::case_1(Node* &root) {
+	if (parent != LEAF) {
+		case_2(root);
+	}
+}
+
+void Node::case_2(Node* &root) {
+	if (sibling->color == RED) {
+		parent->color = RED;
+		sibling->color = BLACK;
+		if (getChild() == LEFT)
+			sibling->rotate2(L, R);
+		}
+	case_3(root);
+}
+
+void Node::case_3(Node* &root) {
+	case_4(root);
+}
+
+void Node::case_4(Node* &root) {
+	case_5(root);
+}
+
+void Node::case_5(Node* &root) {
 	
+	case_6(root);
+}
+
+void Node::case_6(Node* &root) {
+	
+	return;
 }

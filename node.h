@@ -26,7 +26,6 @@ class Node {
 		
 		void repairInsert();
 		
-		void case_4();
 		
 	
 	// each node has data and a left and right node
@@ -51,5 +50,11 @@ class Node {
 		void removeOne(Node* &root, int c);
 		
 		void case_1(Node* &root);
+		void case_2(Node* &root);
+		void case_3(Node* &root);
+		void case_4(Node* &root);
+		void case_5(Node* &root);
+		void case_6(Node* &root);
+		
 };
 #endif

@@ -28,42 +28,56 @@ int main () {
 
 	RedBlackTree tree;
 	
-	
-	char fileName[25];
-	cout << "Please enter the name of the file you wish to read into the red black tree." << endl
-		<< "[If you want to create an empty tree with a root of value 100, type (empty.txt)]." << endl;
-	cin.get(fileName, sizeof(fileName));
+	char choose[10] =  "xxxxxxxxx" ;
+		
+	cout << "You choose to start by inserting a file or starting with an empty tree. Type [F] to start with inserting a file and [E] for an empty tree." << endl;
+	cin >> choose;
 	cin.get();
-	// use ifstream to open the file
-	ifstream inFile;
 	
-	inFile.open(fileName);
+	if (strcmp(choose, "f") == 0 || strcmp(choose, "F") == 0 || strcmp(choose, "file") == 0 || strcmp(choose, "File") == 0) {
+	
+		char fileName[25];
+		cout << "Please enter the name of the file you wish to read into the red black tree." << endl;
+		cin.get(fileName, sizeof(fileName));
+		cin.get();
+		// use ifstream to open the file
+		ifstream inFile;
+		
+		inFile.open(fileName);
 
-	// if there is a file then read in the values separated by commas
-	if (inFile.is_open()) {
-		cout << "Opening file..." << endl;
-		int entry;
-		//char number[20];
-		//while (inFile >> entry) {}
-		while (inFile.good()) {
-			
-			if (inFile) {
-				inFile >> entry;
-				cerr << entry << " ";
-				tree.insert(entry);
-				inFile.ignore();
-			}	
+		// if there is a file then read in the values separated by commas
+		if (inFile.is_open()) {
+			cout << "Opening file..." << endl;
+			int entry;
+			//char number[20];
+			//while (inFile >> entry) {}
+			while (inFile.good()) {
+				
+				if (inFile) {
+					inFile >> entry;
+					cerr << entry << " ";
+					tree.insert(entry);
+					inFile.ignore();
+				}	
+			}
+			cout << endl;
 		}
+		
+		// if there is not a file then say so and quit
+		else if (!inFile) {
+			cout << "Unable to open file " << fileName << endl;// << ".txt" << endl;
+			return 0;
+		}
+
+		inFile.close();
+	} else {
+		int n = 0;
+		cout << "Enter a number to add: ";
+		cin >> n;
+		tree.insert(n);
 		cout << endl;
 	}
-	
-	// if there is not a file then say so and quit
-	else if (!inFile) {
-		cout << "Unable to open file " << fileName << endl;// << ".txt" << endl;
-		return 0;
-	}
-
-	inFile.close();
+		
 	
 	// while not quitting, ask if they want to print add or quit
 	while (true) {
@@ -77,8 +91,7 @@ int main () {
 		if (strcmp(input, "p") == 0 || strcmp(input, "P") == 0 || strcmp(input, "print") == 0 || strcmp(input, "Print") == 0) {
 			
 			// check if there is a tree then print out
-	
-			cout << "[Infix] ";
+		
 			tree.print();
 			cout << endl;
 			tree.visual();

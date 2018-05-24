@@ -11,8 +11,12 @@ RedBlackTree::~RedBlackTree() {
 }
 // use infix to print out
 void RedBlackTree::print() const {
+	
 	if (root != NULL) {
+		cout << "[Infix] ";
 		root->print();
+	} else {
+		cout << "The tree is empty." << endl;
 	}
 }
 
