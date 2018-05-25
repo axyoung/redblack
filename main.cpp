@@ -34,6 +34,7 @@ int main () {
 	cin >> choose;
 	cin.get();
 	
+	//when first opening the file the user can choose to open a file or start with an empty file
 	if (strcmp(choose, "f") == 0 || strcmp(choose, "F") == 0 || strcmp(choose, "file") == 0 || strcmp(choose, "File") == 0) {
 	
 		char fileName[25];
@@ -52,11 +53,18 @@ int main () {
 			//char number[20];
 			//while (inFile >> entry) {}
 			while (inFile.good()) {
+				inFile >> entry;
 				
 				if (inFile) {
-					inFile >> entry;
 					cerr << entry << " ";
-					tree.insert(entry);
+					
+					// when entering in numbers they will be removed if negative
+					if (entry < 0) {
+						tree.remove(-entry);
+					} else {
+						tree.insert(entry);
+					}
+					
 					inFile.ignore();
 				}	
 			}
@@ -139,6 +147,5 @@ int main () {
 
 	}
 	
-
 	return 0;
 }

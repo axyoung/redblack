@@ -265,6 +265,7 @@ void Node::rotate(int c1, int c2) {
 }
 
 // this uses the concept maps from CS WISC - this is the first and third picture
+// this rotate function is similar to the one used by wikipedia except it need this to be equal to p in the wisc code
 // in a left rotate - C1 is left and c2 is right
 void Node::rotate2(int c1, int c2) {
 	//LL->RL
@@ -342,6 +343,7 @@ void Node::repairInsert() {
 	parent->color = BLACK;
 }
 
+// this function removes a node from the tree
 void Node::remove(Node* &root) {
 	
 	// new root case - updating the root
@@ -365,17 +367,17 @@ void Node::remove(Node* &root) {
 			delete child[L];
 			child[L] = LEAF;
 		}
-		
 		return;
 	}
 	
 	// no children just delete
 	if (child[L] == LEAF && child[R] == LEAF) {
-		parent->child[getChild()] = child[getChild()];
+		
 		if (color == BLACK) {
-			this->case_1(root);
+			case_1(root);
 		}
 		
+		parent->child[getChild()] = LEAF;
 		delete this;
 		return;
 	}
@@ -388,7 +390,6 @@ void Node::remove(Node* &root) {
 		} else { // if child on the right switch and delete
 			removeOne(root, R);
 		}
-		
 		return;
 	}
 	
@@ -400,8 +401,7 @@ void Node::remove(Node* &root) {
 		node->remove(root);
 		return;
 	}
-	
-	
+
 }
 
 // this will find the rightmost child of this node
@@ -415,7 +415,7 @@ Node* Node::findRightmostChild() {
 }
 
 void Node::removeOne(Node* &root, int c) {
-	// one child case deletion
+	// one child case deletion - this covers the cases for when there is one non leaf child
 	
 	if (child[c]->color == RED) {
 		child[c]->color = BLACK;
@@ -431,37 +431,99 @@ void Node::removeOne(Node* &root, int c) {
 	return;
 }
 
-// using wikipedia code for black node being removed with 2 leaves
+// using wikipedia code for black node being removed with 2 leaves as children
+// case 1 is parent is not the root
 void Node::case_1(Node* &root) {
-	if (parent != LEAF) {
+	if (parent != NULL) {
 		case_2(root);
 	}
 }
 
+// case 2 is if the sibling is red
 void Node::case_2(Node* &root) {
-	if (sibling->color == RED) {
+	
+	if (sibling()->color == RED) {
 		parent->color = RED;
-		sibling->color = BLACK;
-		if (getChild() == LEFT)
-			sibling->rotate2(L, R);
+		sibling()->color = BLACK;
+		
+		if (getChild() == L) { // rotate left
+			sibling()->rotate2(L, R);
+		} else { // rotate right
+			sibling()->rotate2(R, L);
 		}
+		
+		if (parent->parent->parent == NULL) {
+			root = parent->parent;
+		}
+	}
+	
 	case_3(root);
 }
 
+// case 3 is if the parent, sibling and its children are all black
 void Node::case_3(Node* &root) {
-	case_4(root);
+	
+	Node* s = sibling();
+
+	if (parent->color == BLACK && s->color == BLACK && s->child[R]->color == BLACK && s->child[L]->color == BLACK) {
+		s->color = RED;
+		parent->case_1(root);
+	} else {
+		case_4(root);
+	}
 }
 
+// case 4 is for when the parent is red but sibling and children are black
 void Node::case_4(Node* &root) {
-	case_5(root);
+	
+	Node* s = sibling();
+	
+	if (parent->color == RED && s->color == BLACK && s->child[R]->color == BLACK && s->child[L]->color == BLACK) {
+		s->color = RED;
+		parent->color = BLACK;
+	} else {
+		case_5(root);
+	}
 }
 
+// case 5 is for when left or right child of the sibling is black
 void Node::case_5(Node* &root) {
+	
+	Node* s = sibling();
+	if (s->color == BLACK) {
+		if (getChild() == L && s->child[R]->color == BLACK && s->child[L]->color == RED) {
+			s->color = RED;
+			s->child[L]->color = BLACK;
+			s->child[L]->rotate2(R, L); // rotate right
+		}
+		
+		else if (getChild() == R && s->child[L]->color == BLACK && s->child[R]->color == RED) {
+			s->color = RED;
+			s->child[R]->color = BLACK;
+			s->child[R]->rotate2(L, R); // rotate left
+		}
+	}
 	
 	case_6(root);
 }
 
+// case 6
 void Node::case_6(Node* &root) {
 	
-	return;
+	Node* s = sibling();
+	
+	s->color = parent->color;
+	parent->color = BLACK;
+	
+	if (getChild() == L) {
+		s->child[R]->color = BLACK;
+		s->rotate2(L, R); // left rotate
+	} else {
+		s->child[L]->color = BLACK;
+		s->rotate2(R, L); // right rotate
+	}
+	
+	if (parent->parent->parent == NULL) {
+		root = parent->parent;
+	}
 }
